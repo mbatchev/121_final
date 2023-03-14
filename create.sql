@@ -8,12 +8,13 @@ DROP TABLE IF EXISTS titles;
 -- table that stores all of the movies & tv shows and their information
 CREATE TABLE titles (
     -- unique identifier provided by imbdb
-    imdb_id VARCHAR(9),
+    imdb_id VARCHAR(10),
      -- identifies what type the title is, "short", "movie", etc
     titleType VARCHAR(12),
      -- the name of the title 
-    primaryTitle VARCHAR(100),
-    releaseYear YEAR,
+    primaryTitle VARCHAR(279),
+    -- cant use YEAR type because we have years less than 1901
+    releaseYear SMALLINT UNSIGNED, 
     runtimeMinutes INT,
     PRIMARY KEY (imdb_id)
 );
