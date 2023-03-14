@@ -1,0 +1,2 @@
+
+LOAD DATA LOCAL INFILE 'titles_edit.tsv' INTO TABLE titles IGNORE 1 ROWS;
