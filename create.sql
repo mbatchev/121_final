@@ -12,6 +12,7 @@ CREATE TABLE titles (
      -- identifies what type the title is, "short", "movie", etc
     titleType VARCHAR(12),
      -- the name of the title 
+     -- longest value in our dataset is 278
     primaryTitle VARCHAR(279),
     -- cant use YEAR type because we have years less than 1901
     releaseYear SMALLINT UNSIGNED, 

@@ -1,0 +1,14 @@
+To enable infile import:
+mysql> SET GLOBAL local_infile=1;
+mysql> quit
+/usr/local/mysql/bin/mysql -uroot -p --local-infile
+
+To set up database:
+make sure that "out.csv" is in the same directory
+source create.sql;
+source load.sql;
+
+
+Data source: 
+https://datasets.imdbws.com/ "title.basics.tsv.gz"
+documented here: https://www.imdb.com/interfaces/ 
