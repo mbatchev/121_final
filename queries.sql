@@ -4,7 +4,7 @@
 
 -- GETS YOUR FEED
 -- CONSISTS OF ALl REVIEWS POSTED BY YOU OR YOUR FRIENDS
-SELECT username, review_content, star_rating, post_time 
+SELECT username, review_content, star_rating, post_time, rid
 FROM reviews as r
 JOIN users USING(uid)
 WHERE (r.uid = 00) 

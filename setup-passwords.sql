@@ -88,6 +88,9 @@ DELIMITER ;
 -- AND THUS FOR THE FOREIGN KEY CONSTRAINT TO BE SATISFIED
 CALL sp_add_user(1, "password");
 CALL sp_add_user(2, "123456");
+CALL sp_add_user(3, "test");
+CALL sp_add_user(4, "pass");
+CALL sp_add_user(5, "short");
 
 
 -- [Problem 1d]

@@ -85,3 +85,5 @@ CREATE TABLE likes (
 
 -- allows for quicker searching of movies by their name
 ALTER TABLE titles ADD INDEX (primaryTitle);
+-- allows for logging in with username to be faster
+ALTER TABLE users ADD INDEX (username);
