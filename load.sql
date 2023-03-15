@@ -17,3 +17,19 @@ VALUES ("u1", NOW()),
        ("u3", NOW() - INTERVAL 2 DAY),
        ("u4", NOW() - INTERVAL 3 DAY),
        ("u5", NOW() - INTERVAL 4 DAY);
+
+-- INSERT FRIENDSHIPS BETWEEN 2 MAIN TEST USERS
+INSERT INTO friendships (uid_1, uid_2)
+VALUES (1,2),
+       (2,1);
+
+-- SAMPLE REVIEWS LEFT BY 2 MAIN TEST USERS AND ONE LEFT BY "STRANGER"
+INSERT INTO reviews (uid, imdb_id, post_time, review_content, star_rating)
+VALUES (1, "tt0829482", NOW() - INTERVAL 1 HOUR, "Watched suoerbad 5/5 ", 5),
+       (2, "tt0829482", NOW() - INTERVAL 5 MINUTE, "Didn't like superbad", 1),
+       (1, "tt0903747", NOW() - INTERVAL 10 HOUR, "bravo vince", 5),
+       (3, "tt0101120", NOW() - INTERVAL 1 HOUR, "tim the tool man taylor", 5);
+
+INSERT INTO likes (uid, rid)
+VALUES (1, 1), -- user 1 likes their own post 
+       (1, 2); -- user 1 likes post id 2
