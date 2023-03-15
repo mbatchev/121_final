@@ -1,4 +1,4 @@
-
+DROP TABLE IF EXISTS user_info;
 DROP TABLE IF EXISTS likes;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS friendships;
@@ -23,9 +23,8 @@ CREATE TABLE titles (
 -- stores user accounts
 CREATE TABLE users (
     uid BIGINT UNSIGNED AUTO_INCREMENT,
-    username VARCHAR(20) NOT NULL,
+    username VARCHAR(20) NOT NULL UNIQUE,
     join_date DATETIME NOT NULL,
-    password VARCHAR(25) NOT NULL,
     PRIMARY KEY (uid)
 );
 
