@@ -25,7 +25,7 @@ VALUES (1,2),
 
 -- SAMPLE REVIEWS LEFT BY 2 MAIN TEST USERS AND ONE LEFT BY "STRANGER"
 INSERT INTO reviews (uid, imdb_id, post_time, review_content, star_rating)
-VALUES (1, "tt0829482", NOW() - INTERVAL 1 HOUR, "Watched suoerbad 5/5 ", 5),
+VALUES (1, "tt0829482", NOW() - INTERVAL 1 HOUR, "Watched superbad 5/5 ", 5),
        (2, "tt0829482", NOW() - INTERVAL 5 MINUTE, "Didn't like superbad", 1),
        (1, "tt0903747", NOW() - INTERVAL 10 HOUR, "bravo vince", 5),
        (3, "tt0101120", NOW() - INTERVAL 1 HOUR, "tim the tool man taylor", 5);

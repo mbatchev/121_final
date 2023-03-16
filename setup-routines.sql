@@ -4,12 +4,12 @@
 -- RETURNS your new uid IF SUCCESFUL, 0 IF NOT
 DROP PROCEDURE IF EXISTS sp_sign_up;
 DELIMITER !
-CREATE PROCEDURE sp_sign_up(username VARCHAR(20), password VARCHAR(20))
+CREATE PROCEDURE sp_sign_up(in_username VARCHAR(20), password VARCHAR(20))
 BEGIN
     DECLARE new_uid BIGINT UNSIGNED;
-    IF (SELECT COUNT(*) FROM users as u WHERE u.username = username) = 0 THEN
+    IF (SELECT COUNT(*) FROM users as u WHERE u.username = in_username) = 0 THEN
         INSERT INTO users (username, join_date)
-        VALUES (username, NOW());
+        VALUES (in_username, NOW());
         SET new_uid = LAST_INSERT_ID();
         CALL sp_add_user(new_uid, password);
         SELECT new_uid as uid;
@@ -28,21 +28,22 @@ RETURNS TINYINT DETERMINISTIC
 BEGIN
     DECLARE your_uid BIGINT UNSIGNED;
     IF (SELECT COUNT(*) FROM users as u WHERE u.username = username) = 0 THEN
-        RETURN 0 as uid;
+        RETURN 0;
     ELSE
         SET your_uid = (SELECT uid FROM users as u WHERE u.username = username); 
         IF authenticate(your_uid, password) = 1 THEN 
-            RETURN your_uid as uid;
+            RETURN your_uid;
         ELSE 
-            RETURN 0 as uid;
+            RETURN 0;
         END IF;
-        RETURN 0 as uid;
+        RETURN 0;
     END IF;
 END !
 DELIMITER ;
 
 
 -- LIKES A REVIEW GIVEN ITS REVIEW ID
+-- IF YOU ALREADY LIKED IT, JUST IGNORE
 DROP PROCEDURE IF EXISTS sp_like_post;
 DELIMITER !
 CREATE PROCEDURE sp_like_post(in_uid BIGINT UNSIGNED, in_rid BIGINT UNSIGNED)
@@ -50,7 +51,7 @@ BEGIN
     IF (SELECT COUNT(*) FROM reviews WHERE rid = in_rid) = 0 THEN
         SELECT 0 as success;
     ELSE 
-        INSERT INTO likes VALUES (in_uid, in_rid);
+        INSERT IGNORE INTO likes VALUES (in_uid, in_rid);
         SELECT 1 as success;
     END IF;
 END !
@@ -62,7 +63,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS sp_create_post;
 DELIMITER !
 CREATE PROCEDURE sp_create_post(in_uid BIGINT UNSIGNED, 
-                                in_imbd VARCHAR(10), 
+                                in_imdb VARCHAR(10), 
                                 txt VARCHAR(2000), 
                                 stars INT)
 BEGIN
@@ -70,7 +71,7 @@ BEGIN
         SELECT 0 as success;
     ELSE 
         INSERT INTO reviews (uid, imdb_id, review_content, star_rating, post_time)
-        VALUES (in_uid, in_imbd, txt, stars, NOW());
+        VALUES (in_uid, in_imdb, txt, stars, NOW());
         SELECT 1 as success;
     END IF;
 END !
