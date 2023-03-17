@@ -12,7 +12,7 @@ source setup.sql;
 source load-data.sql;
 source setup-passwords.sql;
 source setup-routines.sql;
-(alternately use 'source all.sql' to run all of those sources with one command)
+(alternately use 'source all.sql' to run all of those commands with one command)
 
 To use python file:
 "python3 app.py"
