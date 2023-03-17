@@ -14,6 +14,7 @@ source setup.sql;
 source load-data.sql;
 source setup-passwords.sql;
 source setup-routines.sql;
+source grant-permissions.sql;
 (alternately use __'source all.sql'__ to run all of those commands with one command)
 
 **To use python file:**
@@ -23,14 +24,15 @@ source setup-routines.sql;
 2. login using one of credentials in setup-password. 
    An example admin user: username= "u1" password = "password"
    An example non-admin user: username = "u2" pasword = "123456"
-3. alternately create new user
-3. after logging in, can explore menu. Example: press 'f' to view your friends' posts.
+3. alternately you can create a new user as desired
+3. after logging in, can explore menu. Example: press 'f' to view your friends' posts on your feed.
    can also log back out and log in with another account or create another account.
 4. enter "st" to search for a movie or TV show you know by prefix. Suggest testing "breaking" 
    and then "breaking bad" to see how it works.
 5. Get the movie ID after finding the movie/show you want in the search results.
 6. enter "p" to create a review on that movie using its ID.
 7. Post will show up in your feed and feed of your friends
+8. admin users (u1) have extra options in pink, specifically you can delete a review by ID.
 
 
 **Data source:**

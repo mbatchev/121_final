@@ -8,8 +8,8 @@ CREATE PROCEDURE sp_sign_up(in_username VARCHAR(20), password VARCHAR(20))
 BEGIN
     DECLARE new_uid BIGINT UNSIGNED;
     IF (SELECT COUNT(*) FROM users as u WHERE u.username = in_username) = 0 THEN
-        INSERT INTO users (username, join_date)
-        VALUES (in_username, NOW());
+        INSERT INTO users (username, join_date, is_admin)
+        VALUES (in_username, NOW(), 0);
         SET new_uid = LAST_INSERT_ID();
         CALL sp_add_user(new_uid, password);
         SELECT new_uid as uid;

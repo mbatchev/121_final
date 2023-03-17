@@ -168,9 +168,8 @@ def login():
             sys.stderr('An error occurred when logging in.')
         print("Something went wrong, try again.")
         return False, None  
-        
-    if not rows:
-        print('No results found.')
+    print("Something went wrong, try again.")
+    return False, None
 
 def signup():
     """
@@ -200,6 +199,8 @@ def signup():
         else:
             sys.stderr('An error occurred when signing up.')
         return False, None  
+    print("Something went wrong, try again.")
+    return False, None
 
 def get_feed(uid):
     """
@@ -244,6 +245,8 @@ def get_feed(uid):
             print("review id: %d" % (rid))
             print("%d likes" % (likes))
             print("")
+        if len(rows) == 0:
+            print('No results found.')
     except mysql.connector.Error as err:
         if DEBUG:
             sys.stderr(err)
@@ -308,17 +311,18 @@ def search_titles():
             print("unique id:\u001b[34m %s \u001b[0m" % (movieID))
             print("-----------")
             print("")
+        if len(rows) == 0:
+            print('No results found.')
     except mysql.connector.Error as err:
         if DEBUG:
             sys.stderr(err)
             sys.exit(1)
         else:
             sys.stderr('An error occurred when fetching your feed.')
-        return False, None
 
 def post_review(uid):
     """
-    Lets the user 
+    Lets the user post a review for a movie or TV show using its imdb_ID
     """
     imdb_id = input("Enter the movie id of the title you want to review (it can be found by searching using (st)): ")
     text = input("Enter the text for your review: ")
@@ -417,6 +421,8 @@ def get_all_posts():
             print("review id: %d" % (rid))
             print("%d likes" % (likes))
             print("")
+        if len(rows) == 0:
+            print('No results found.')
     except mysql.connector.Error as err:
         if DEBUG:
             sys.stderr(err)
