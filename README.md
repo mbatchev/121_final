@@ -1,4 +1,5 @@
 **To enable infile import:**
+
 mysql> SET GLOBAL local_infile=1;
 mysql> quit
 /usr/local/mysql/bin/mysql -uroot -p --local-infile
@@ -6,6 +7,7 @@ SET GLOBAL log_bin_trust_function_creators = 1;
 https://stackoverflow.com/questions/59993844/error-loading-local-data-is-disabled-this-must-be-enabled-on-both-the-client
 
 **To set up database:**
+
 create a database called "letterboxd";
 make sure that "out.csv" is in the same directory
 source setup.sql;
@@ -15,6 +17,7 @@ source setup-routines.sql;
 (alternately use __'source all.sql'__ to run all of those commands with one command)
 
 **To use python file:**
+
 "python3 app.py"
 1. enter 'l' to login
 2. login using one of credentials in setup-password. 
