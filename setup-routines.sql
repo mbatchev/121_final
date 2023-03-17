@@ -76,3 +76,32 @@ BEGIN
     END IF;
 END !
 DELIMITER ;
+
+-- FOR ADMINS:
+-- MARKS A USER POST FOR DELETION BY STORING ITS INFO INTO A TABLE
+-- A TRIGGER WILL THEN DELETE THE RELEVANT POST
+DROP PROCEDURE IF EXISTS sp_delete_post;
+DELIMITER !
+CREATE PROCEDURE sp_delete_post(in_rid BIGINT UNSIGNED)
+BEGIN
+    DECLARE poster_uid BIGINT UNSIGNED;
+    IF (SELECT COUNT(*) FROM reviews WHERE rid = in_rid) = 0 THEN
+        SELECT 0 as success;
+    ELSE 
+        SET poster_uid = (SELECT uid FROM reviews WHERE rid = in_rid);
+        INSERT IGNORE INTO marked_deletion VALUES (in_rid, poster_uid, NOW());
+        SELECT 1 as success;
+    END IF;
+END !
+DELIMITER ;
+
+-- THIS TRIGGER WAITS FOR sp_delete_post TO BE CALLED
+-- AFTER A POST IS MARKED FOR DELETION,
+-- THIS TRIGGER DELETES THE POST
+DELIMITER !
+CREATE TRIGGER trig_delete_post 
+    AFTER INSERT ON marked_deletion FOR EACH ROW 
+    BEGIN
+        DELETE FROM reviews WHERE rid = NEW.rid;
+    END! 
+DELIMITER ;

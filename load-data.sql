@@ -11,12 +11,12 @@ UPDATE titles SET runtimeMinutes = Null
 WHERE runtimeMinutes = 0;
 
 -- NEXT, INSERT SOME EXAMPLE USER DATA
-INSERT INTO users (username, join_date)
-VALUES ("u1", NOW()),
-       ("u2", NOW() - INTERVAL 1 DAY ),
-       ("u3", NOW() - INTERVAL 2 DAY),
-       ("u4", NOW() - INTERVAL 3 DAY),
-       ("u5", NOW() - INTERVAL 4 DAY);
+INSERT INTO users (username, join_date, is_admin)
+VALUES ("u1", NOW(), 1),
+       ("u2", NOW() - INTERVAL 1 DAY , 0),
+       ("u3", NOW() - INTERVAL 2 DAY, 0),
+       ("u4", NOW() - INTERVAL 3 DAY, 0),
+       ("u5", NOW() - INTERVAL 4 DAY, 0);
 
 -- INSERT FRIENDSHIPS BETWEEN 2 MAIN TEST USERS
 INSERT INTO friendships (uid_1, uid_2)

@@ -20,7 +20,27 @@ LEFT JOIN likes USING(rid)
 WHERE (r.uid = 00) 
 OR (SELECT COUNT(*) FROM friendships
     WHERE uid_1 = 00 AND uid_2 = r.uid) != 0
-GROUP BY rid;
+GROUP BY rid
+ORDER BY post_time DESC;
+
+-- FOR ADMINS, GETS ALL RECENT POSTS
+-- REGARDLESS OF WHETHER THEY ARE YOUR FRIEND OR NOT
+SELECT username, 
+       review_content, 
+       star_rating, 
+       post_time, 
+       rid, 
+       primaryTitle, 
+       COUNT(likes.uid) as likes
+FROM reviews as r
+JOIN users USING(uid)
+JOIN titles USING(imdb_id)
+LEFT JOIN likes USING(rid)
+WHERE (r.uid = 00) 
+OR (SELECT COUNT(*) FROM friendships
+    WHERE uid_1 = 00 AND uid_2 = r.uid) != 0
+GROUP BY rid
+ORDER BY post_time DESC;
 
 -- GETS ALL MOVIES OR TV SHOWS THAT MATCH A SEARCH TERM
 -- SEARCHES BY PREFIX TO PRESERVE INDEX USE
@@ -52,3 +72,7 @@ SELECT rid, username, review_content, star_rating, post_time
 FROM reviews as r
 JOIN users USING(uid)
 WHERE r.imdb_id = "tt0829482"; -- placeholder imdb ID
+
+-- TELLS THE CLIENT IF THEY ARE AN ADMIN
+SELECT is_admin FROM users
+WHERE uid = 00; 

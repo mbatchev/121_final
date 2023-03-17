@@ -6,18 +6,20 @@ SET GLOBAL log_bin_trust_function_creators = 1;
 https://stackoverflow.com/questions/59993844/error-loading-local-data-is-disabled-this-must-be-enabled-on-both-the-client
 
 To set up database:
+create a database called "letterboxd";
 make sure that "out.csv" is in the same directory
 source setup.sql;
 source load-data.sql;
 source setup-passwords.sql;
 source setup-routines.sql;
+(alternately use 'source all.sql' to run all of those sources with one command)
 
 To use python file:
 "python3 app.py"
 1. enter 'l' to login
 2. login using one of credentials in setup-password. 
-   Sample user [username= "u1" password= "password"] has data that you can see
-   in their feed
+   An example admin user: username= "u1" password = "password"
+   An example non-admin user: username = "u2" pasword = "123456"
 3. alternately create new user
 3. after logging in, can explore menu. Example: press 'f' to view your friends' posts.
    can also log back out and log in with another account or create another account.

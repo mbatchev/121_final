@@ -20,12 +20,12 @@ def get_conn():
     try:
         conn = mysql.connector.connect(
           host='localhost',
-          user='root',
+          user='appclient',
           # Find port in MAMP or MySQL Workbench GUI or with
           # SHOW VARIABLES WHERE variable_name LIKE 'port';
           port='3306',
-          password='12345678',
-          database='final',
+          password='clientpw',
+          database='letterboxd',
           autocommit = True
         )
         return conn
@@ -44,12 +44,50 @@ def get_conn():
             sys.stderr.write('An error occurred, please contact the administrator.')
         sys.exit(1)
 
-def show_options(logged_in):
+def get_admin():
+    """"
+    Returns a connected MySQL connector instance, if connection is successful.
+    If unsuccessful, exits.
+    Connected to admin account
+    """
+    try:
+        conn = mysql.connector.connect(
+          host='localhost',
+          user='appadmin',
+          # Find port in MAMP or MySQL Workbench GUI or with
+          # SHOW VARIABLES WHERE variable_name LIKE 'port';
+          port='3306',
+          password='adminpw',
+          database='letterboxd',
+          autocommit = True
+        )
+        return conn
+    except mysql.connector.Error as err:
+        # Remember that this is specific to _database_ users, not
+        # application users. So is probably irrelevant to a client in your
+        # simulated program. Their user information would be in a users table
+        # specific to your database.
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR and DEBUG:
+            sys.stderr.write('Incorrect username or password when connecting to DB.')
+        elif err.errno == errorcode.ER_BAD_DB_ERROR and DEBUG:
+            sys.stderr.write('Database does not exist.')
+        elif DEBUG:
+            sys.stderr.write(err)
+        else:
+            sys.stderr.write('An error occurred, please contact the administrator.')
+        sys.exit(1)
+
+
+## MAIN MENU
+def show_options(logged_in, is_admin):
     """
     Displays options users can choose in the application
     """
     print('What would you like to do? ')
     if logged_in:
+        if is_admin:
+            print('\u001b[35m  (a) - view all posts\u001b[0m')
+            print('\u001b[35m  (d) - delete a post\u001b[0m')
         print('  (f) - view feed')
         print('  (l) - like post')
         print('  (st) - search for movie/show')
@@ -77,6 +115,10 @@ def show_options(logged_in):
                 return "search_title"
             elif ans == "p":
                 return "post"
+            elif ans == "a" and is_admin:
+                return "all"
+            elif ans == "d" and is_admin:
+                return "del"
             else:
                 print('Unknown option.')
         else:
@@ -97,6 +139,8 @@ def quit_ui():
     print('Good bye!')
     exit()
 
+
+## QUERIES AND MENU OPTIONS
 def login():
     """
     prompts the user for their username and password, then attempts to log them in
@@ -158,6 +202,9 @@ def signup():
         return False, None  
 
 def get_feed(uid):
+    """
+    Gets and prints all reviews and associated information posted by you or your friends
+    """
     try:
         conn.reconnect()
         cursor = conn.cursor()
@@ -176,7 +223,8 @@ def get_feed(uid):
                     WHERE (r.uid = %d) 
                         OR (SELECT COUNT(*) FROM friendships
                             WHERE uid_1 = %d AND uid_2 = r.uid) != 0
-                    GROUP BY rid;""" % (uid, uid))
+                    GROUP BY rid
+                    ORDER BY post_time DESC;""" % (uid, uid))
         rows = cursor.fetchall()
         print("")
         for row in rows:
@@ -297,14 +345,121 @@ def post_review(uid):
             sys.stderr('An error occurred when signing up.')
         return
 
+## ADMIN MENU OPTIONS AND QUERIES
+def isadmin(uid):
+    """
+    after logging in, checks if the user is an admin to give them appropriate options
+    returns true if admin in order to serve the proper options
+    and also reassigns the connector to be an admin connector in order to enable 
+    elevated priviledge operations
+    """
+    global conn
+    try:
+        conn.reconnect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT is_admin FROM users WHERE uid = %d; " % (uid))
+        rows = cursor.fetchall()
+        if rows and rows[0] and rows[0][0] == 1:
+            print("\u001b[35mWelcome to the admin portal!\u001b[0m")
+            conn = get_admin()
+            return True 
+        else:
+            conn = get_conn()
+        return False
+
+    except mysql.connector.Error as err:
+        if DEBUG:
+            sys.stderr(err)
+            sys.exit(1)
+        else:
+            sys.stderr('An error occurred when logging in.')
+        print("Something went wrong, try again.")
+        return False
+
+def get_all_posts():
+    """
+    For admin users:
+    gets all the recent posts to allow moderation
+    """
+    try:
+        conn.reconnect()
+        cursor = conn.cursor()
+        cursor.execute(
+                """SELECT username, 
+                    review_content, 
+                    star_rating, 
+                    post_time, 
+                    rid, 
+                    primaryTitle, 
+                    COUNT(likes.uid) as likes
+                    FROM reviews as r
+                    JOIN users USING(uid)
+                    JOIN titles USING(imdb_id)
+                    LEFT JOIN likes USING(rid)
+                    GROUP BY rid
+                    ORDER BY post_time DESC;""")
+        rows = cursor.fetchall()
+        print("")
+        for row in rows:
+            username = row[0]
+            txt = row[1]
+            stars = row[2]
+            posted = str(row[3])
+            rid = row[4]
+            movieName = row[5]
+            likes = row[6]
+            print("\u001b[34m%s posted on %s \u001b[0m" % (username, posted))
+            print("They reviewed \u001b[34m'%s'\u001b[0m" % movieName)
+            print("-------------------------------------")
+            print(txt)
+            print("-------------------------------------")
+            print("They gave a %d / 5 rating" % (stars))
+            print("review id: %d" % (rid))
+            print("%d likes" % (likes))
+            print("")
+    except mysql.connector.Error as err:
+        if DEBUG:
+            sys.stderr(err)
+            sys.exit(1)
+        else:
+            sys.stderr('An error occurred when fetching all posts.')
+
+def delete_post():
+    """
+    For admins:
+    marks a post for deletion, which then gets deleted by a trigger
+    """
+    rid = input("Enter the review id of the review you want to delete: ")
+    try:
+        conn.reconnect()
+        cursor = conn.cursor()
+        cursor.execute("CALL sp_delete_post('%s')" % (rid))
+        rows = cursor.fetchall()
+        if rows and rows[0]:
+            if rows[0][0] == 0:
+                print("\u001b[31mThat review ID was not found. Try again.\u001b[0m")
+                return
+            else:
+                print("\033[1;32mSuccesfully deleted post. \u001b[0m")
+                return
+    except mysql.connector.Error as err:
+        if DEBUG:
+            sys.stderr(err)
+            sys.exit(1)
+        else:
+            sys.stderr('An error occurred when signing up.')
+        return
+
+## MAIN LOOP
 def main():
     """
     Main function for starting things up.
     """
     logged = False
     uid = None 
+    admin = False
     while True:
-        match show_options(logged):
+        match show_options(logged, admin):
             case "exit":
                 quit_ui()
             case "log_out":
@@ -312,6 +467,8 @@ def main():
                 uid = None
             case "login":
                 logged, uid = login()
+                if uid is not None:
+                    admin = isadmin(uid)
             case "signup":
                 logged, uid = signup()
             case "feed":
@@ -322,6 +479,10 @@ def main():
                 search_titles()
             case "post":
                 post_review(uid)
+            case "all":
+                get_all_posts()
+            case "del":
+                delete_post()
                 
 
 if __name__ == '__main__':
