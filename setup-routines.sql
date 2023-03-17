@@ -30,7 +30,7 @@ BEGIN
     IF (SELECT COUNT(*) FROM users as u WHERE u.username = username) = 0 THEN
         RETURN 0;
     ELSE
-        SET your_uid = (SELECT uid FROM users as u WHERE u.username = username); 
+        SET your_uid = (SELECT uid FROM users as u WHERE u.username = username);
         IF authenticate(your_uid, password) = 1 THEN 
             RETURN your_uid;
         ELSE 
@@ -98,6 +98,8 @@ DELIMITER ;
 -- THIS TRIGGER WAITS FOR sp_delete_post TO BE CALLED
 -- AFTER A POST IS MARKED FOR DELETION,
 -- THIS TRIGGER DELETES THE POST
+--
+-- THIS TRIGGER CONTAINS RELATIONAL ALGEBRA EXPRESSION 3 FROM PARG G
 DELIMITER !
 CREATE TRIGGER trig_delete_post 
     AFTER INSERT ON marked_deletion FOR EACH ROW 
