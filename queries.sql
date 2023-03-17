@@ -70,6 +70,8 @@ WHERE (SELECT COUNT(*) FROM friendships
 
 
 -- GETS ALL REVIEWS OF A MOVE
+--
+-- THIS IS RELATIONAL ALGEBRA EXPRESSION NUMBER 2 FROM PART G
 SELECT rid, username, review_content, star_rating, post_time 
 FROM reviews as r
 JOIN users USING(uid)
