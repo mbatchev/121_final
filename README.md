@@ -1,3 +1,8 @@
+##
+## MICHAEL BATCHEV
+## LENA WU
+## 
+
 **To enable infile import:**
 
 mysql> SET GLOBAL local_infile=1;

@@ -1,3 +1,8 @@
+##
+## MICHAEL BATCHEV
+## LENA WU
+## 
+
 import sys  # to print error messages to sys.stderr
 import mysql.connector
 # To get error codes from the connector, useful for user-friendly
